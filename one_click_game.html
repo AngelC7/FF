@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>One-Click Game</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+    #gameCanvas {
+      border: 2px solid #000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="400" height="400"></canvas>
+  
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let player = {
+      x: 50,
+      y: 300,
+      width: 50,
+      height: 50,
+      color: 'blue',
+      velocity: 0,
+      gravity: 0.5,
+      jumpPower: -10,
+      isJumping: false
+    };
+
+    let obstacle = {
+      x: 400,
+      y: 300,
+      width: 50,
+      height: 50,
+      color: 'red',
+      speed: 3
+    };
+
+    function drawPlayer() {
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+    }
+
+    function drawObstacle() {
+      ctx.fillStyle = obstacle.color;
+      ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+    }
+
+    function updateGame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Player gravity and jumping
+      player.velocity += player.gravity;
+      player.y += player.velocity;
+
+      if (player.y + player.height > canvas.height) {
+        player.y = canvas.height - player.height;
+        player.isJumping = false;
+      }
+
+      // Move obstacle
+      obstacle.x -= obstacle.speed;
+      if (obstacle.x < -obstacle.width) {
+        obstacle.x = canvas.width;
+      }
+
+      // Draw everything
+      drawPlayer();
+      drawObstacle();
+
+      requestAnimationFrame(updateGame);
+    }
+
+    function jump() {
+      if (!player.isJumping) {
+        player.velocity = player.jumpPower;
+        player.isJumping = true;
+      }
+    }
+
+    canvas.addEventListener('click', jump);
+
+    updateGame();
+  </script>
+</body>
+</html>
